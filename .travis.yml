@@ -21,3 +21,17 @@ after_success:
   - docker push nebbigit/multi-nginx
   - docker push nebbigit/multi-server
   - docker push nebbigit/multi-worker
+
+
+deploy: 
+  provider: elasticbeanstalk
+  region: "eu-north-1"
+  app: "multi-docker"
+  env: "MultiDocker-env"
+  bucket_name: "elasticbeanstalk-eu-north-1-807789500198"
+  bucket_path: "docker-multi"
+  on: 
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
