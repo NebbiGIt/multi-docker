@@ -1,0 +1,23 @@
+sudo: required
+services: 
+  - docker
+
+before_install:
+  - docker build -t nebbigit/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run nebbigit/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t nebbigit/multi-client ./client
+  - docker build -t nebbigit/multi-nginx ./nginx
+  - docker build -t nebbigit/multi-server ./server
+  - docker build -t nebbigit/multi-worker ./worker
+
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take thos images and push them to docker hub
+  - docker push nebbigit/multi-client
+  - docker push nebbigit/multi-nginx
+  - docker push nebbigit/multi-server
+  - docker push nebbigit/multi-worker
